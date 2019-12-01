@@ -91,6 +91,7 @@
       $(document).ready(function() {
         alert("executed");
         $.ajax({
+          headers: { Accept: "application/json" },
           method: "GET",
           url: "localhost:3000/api",
           success: function(res) {
