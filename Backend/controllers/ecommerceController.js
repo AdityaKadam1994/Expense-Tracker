@@ -5,11 +5,13 @@ const ecom_coll = mongoconn.model("ecommerce", mongoconn.Schema(ecommerceSchema)
 
 // Get all details
 const getDetails = (req, res) => {
-    ecom_coll.find({}, (err, data) => {
-    if(err){
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  ecom_coll.find({}, (err, data) => {
+    if (err) {
       console.log(err);
     }
-    else{
+    else {
       console.log(data);
     }
     res.send(data);
@@ -18,6 +20,8 @@ const getDetails = (req, res) => {
 
 // Get one particular details by mobile number
 const getDetail = (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   let id = req.params.id;
   ecom_coll.find({ _id: id }, (err, data) => {
     console.log(data);
@@ -27,6 +31,8 @@ const getDetail = (req, res) => {
 
 // Create Purchase information in database
 const createPurchase = (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   let purchaseData = {};
   purchaseData["date"] = req.body.date;
   purchaseData["particular"] = req.body.particular;
@@ -47,6 +53,8 @@ const createPurchase = (req, res) => {
 
 // Update Purchase information
 const updatePurchase = (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   let id = req.params.id;
   console.log(id);
   let purchaseData = {};
@@ -73,14 +81,16 @@ const updatePurchase = (req, res) => {
 
 // Delete Purchase Record
 const deletePurchase = (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   let id = req.params.id;
   console.log(id);
   ecom_coll.deleteOne({ _id: id }, (err) => {
-    if (err){
+    if (err) {
       console.log("error in deleting", err);
     }
   });
-  res.send({'sucsess':true, 'msg':'Record deleted successfully'});
+  res.send({ 'sucsess': true, 'msg': 'Record deleted successfully' });
 };
 
 module.exports = {
