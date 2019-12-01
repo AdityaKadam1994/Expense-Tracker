@@ -87,5 +87,20 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"
     ></script>
+    <script>
+      $(document).ready(function() {
+        alert("executed");
+        $.ajax({
+          method: "GET",
+          url: "localhost:3000/api",
+          success: function(res) {
+            console.log(res);
+          },
+          error: function(er) {
+            console.log(er);
+          }
+        });
+      });
+    </script>
   </body>
 </html>
