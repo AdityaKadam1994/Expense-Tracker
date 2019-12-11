@@ -41,32 +41,7 @@
             <th scope="col">Action</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>20/11/2019</td>
-            <td><a href="#"> Rice </a></td>
-            <td>80rs</td>
-            <td>Cash</td>
-            <td>
-              <button type="button" class="btn delete-btn">
-                <i class="fa fa-trash" aria-hidden="true"></i>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>21/11/2019</td>
-            <td>Meal</td>
-            <td>60rs</td>
-            <td>Cash</td>
-            <td>
-              <button type="button" class="btn delete-btn">
-                <i class="fa fa-trash" aria-hidden="true"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
+        <tbody class="expense-list-tbody"></tbody>
       </table>
     </div>
 
@@ -87,15 +62,34 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script id="entry-template" type="text/x-handlebars-template">
+        {{#each this}}
+        <tr>
+          <th scope="row">1</th>
+          <td>{{date}}</td>
+          <td><a href="#"> Rice </a></td>
+          <td>{{price}}</td>
+          <td>{{paymentmode}}</td>
+          <td>
+            <button type="button" class="btn delete-btn">
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+          </td>
+        </tr>
+      {{/each}}
+    </script>
     <script>
       $(document).ready(function() {
-        alert("executed");
         $.ajax({
           headers: { Accept: "application/json" },
           method: "GET",
-          url: "http://localhost:3000/api",
+          url: "http://localhost:5500/api",
           success: function(res) {
-            console.log(res);
+            let source = $("#entry-template").html();
+            let template = Handlebars.compile(source);
+            let items = $(".expense-list-tbody");
+            $(".expense-list-tbody").append(template(res));
           },
           error: function(er) {
             console.log(er);
