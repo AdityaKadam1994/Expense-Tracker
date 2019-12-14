@@ -15,7 +15,7 @@
       type="text/css"
       href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
     />
-
+    <link rel="stylesheet" href="./simplePagination.css" />
     <link rel="stylesheet" href="css/style.css" />
     <title>Expense Tracker</title>
   </head>
@@ -30,6 +30,21 @@
     </ul>
 
     <div class="container">
+      <form class="search-form form-inline align-items-center">
+        <div class="">
+          <input
+            type="text"
+            class="form-control search-query"
+            placeholder="Enter search query..."
+          />
+          <button type="button" class="search-btn btn btn-primary">
+            Search
+          </button>
+        </div>
+        <div>
+          <p class="ml-4">Total Expense: <span class="total-cost"></span></p>
+        </div>
+      </form>
       <table class="table mt-1">
         <thead class="thead-light">
           <tr>
@@ -45,6 +60,8 @@
         </thead>
         <tbody class="expense-list-tbody"></tbody>
       </table>
+
+      <div class="pagination-div"></div>
     </div>
 
     <!-- js file declaration -->
@@ -65,7 +82,9 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script src="./jquery.simplePagination.js"></script>
     <script id="entry-template" type="text/x-handlebars-template">
+
         {{#each this}}
         <tr>
           <th scope="row">{{id}}</th>
@@ -91,16 +110,25 @@
       $(document).ready(function() {
         // get expense list
         function getFunctionList() {
+          $(".total-cost").empty();
           $.ajax({
             headers: { Accept: "application/json" },
             method: "GET",
             url: "http://localhost:3000/expense_list",
             success: function(res) {
-              console.log(res);
               let source = $("#entry-template").html();
               let template = Handlebars.compile(source);
-              let items = $(".expense-list-tbody");
+
               $(".expense-list-tbody").append(template(res));
+              pagination(res);
+              //Total Cost on load
+              let initialValue = 0;
+              let total_cost = res.reduce(
+                (x, y) => x + parseInt(y.Cost),
+                initialValue
+              );
+              $(".total-cost").html(total_cost);
+              console.log(total_cost);
             },
             error: function(er) {
               console.log(er);
@@ -111,7 +139,7 @@
         // delete record
         $("body").on("click", ".delete-btn", function() {
           let dataId = $(this).data("id");
-          console.log(dataId);
+
           $.ajax({
             headers: { Accept: "application/json" },
             method: "Delete",
@@ -125,6 +153,58 @@
           });
         });
         getFunctionList();
+
+        // pagination function
+        function pagination(data) {
+          let items = $(".expense-list-tbody tr");
+          let itemNum = items.length;
+          let perPage = 10;
+          items.slice(perPage).hide();
+
+          $(".pagination-div").pagination({
+            items: itemNum,
+            itemsOnPage: perPage,
+            cssStyle: "light-theme",
+            onPageClick: function(pageNumber) {
+              let from = perPage * (pageNumber - 1);
+              let to = from + perPage;
+              items
+                .hide()
+                .slice(from, to)
+                .show();
+              window.scrollTo(0, 0);
+            }
+          });
+        }
+
+        // search function
+        $(".search-btn").on("click", function() {
+          let typedQuery = $(".search-query").val();
+          $(".expense-list-tbody").empty();
+
+          $.ajax({
+            headers: { Accept: "application/json" },
+            method: "GET",
+            url: `http://localhost:3000/expense_list?q=${typedQuery}`,
+            success: function(res) {
+              $(".expense-list-body").empty();
+              let source = $("#entry-template").html();
+              let template = Handlebars.compile(source);
+              $(".expense-list-tbody").append(template(res));
+              pagination(res);
+              let initialValue = 0;
+              let total_cost = res.reduce(
+                (x, y) => x + parseInt(y.Cost),
+                initialValue
+              );
+              $(".total-cost").html(total_cost);
+              console.log(total_cost);
+            },
+            error: function(er) {
+              console.log(er);
+            }
+          });
+        });
       });
     </script>
   </body>
