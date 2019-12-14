@@ -1,0 +1,23 @@
+{
+  "name": "aditya-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "json-server": "json-server --watch db.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vinodnimbalkar/aditya-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vinodnimbalkar/aditya-api/issues"
+  },
+  "homepage": "https://github.com/vinodnimbalkar/aditya-api#readme",
+  "dependencies": {
+    "json-server": "^0.15.1"
+  }
+}

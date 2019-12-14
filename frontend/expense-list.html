@@ -36,8 +36,10 @@
             <th scope="col">#</th>
             <th scope="col">Date</th>
             <th scope="col">Particulars</th>
+            <th scope="col">Quantity</th>
             <th scope="col">Cost</th>
             <th scope="col">Transaction Details</th>
+            <th scope="col">Note</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
@@ -66,35 +68,63 @@
     <script id="entry-template" type="text/x-handlebars-template">
         {{#each this}}
         <tr>
-          <th scope="row">1</th>
-          <td>{{date}}</td>
-          <td><a href="#"> Rice </a></td>
-          <td>{{price}}</td>
-          <td>{{paymentmode}}</td>
+          <th scope="row">{{id}}</th>
+          <td>{{Date}}</td>
+          <td><a href="#"> {{Item}} </a></td>
+          <td>{{Quantity}}</td>
+          <td>{{Cost}}</td>
+          <td>{{Payment_Mode}}</td>
+          <td>{{Note}}</td>
           <td>
-            <button type="button" class="btn delete-btn">
+            <button type="button" class="btn delete-btn" data-id={{id}}>
               <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
           </td>
+        </tr>
+        {{else}}
+        <tr>
+          <td colspan="8" class="text-center"><h4>No data found</h4></td>
         </tr>
       {{/each}}
     </script>
     <script>
       $(document).ready(function() {
-        $.ajax({
-          headers: { Accept: "application/json" },
-          method: "GET",
-          url: "http://localhost:5500/api",
-          success: function(res) {
-            let source = $("#entry-template").html();
-            let template = Handlebars.compile(source);
-            let items = $(".expense-list-tbody");
-            $(".expense-list-tbody").append(template(res));
-          },
-          error: function(er) {
-            console.log(er);
-          }
+        // get expense list
+        function getFunctionList() {
+          $.ajax({
+            headers: { Accept: "application/json" },
+            method: "GET",
+            url: "http://localhost:3000/expense_list",
+            success: function(res) {
+              console.log(res);
+              let source = $("#entry-template").html();
+              let template = Handlebars.compile(source);
+              let items = $(".expense-list-tbody");
+              $(".expense-list-tbody").append(template(res));
+            },
+            error: function(er) {
+              console.log(er);
+            }
+          });
+        }
+
+        // delete record
+        $("body").on("click", ".delete-btn", function() {
+          let dataId = $(this).data("id");
+          console.log(dataId);
+          $.ajax({
+            headers: { Accept: "application/json" },
+            method: "Delete",
+            url: `http://localhost:3000/expense_list/${dataId}`,
+            success: function(res) {
+              getFunctionList();
+            },
+            error: function(er) {
+              console.log(er);
+            }
+          });
         });
+        getFunctionList();
       });
     </script>
   </body>

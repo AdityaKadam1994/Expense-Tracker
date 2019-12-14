@@ -34,7 +34,7 @@
         <div class="row">
           <div class="col">
             <label for="date">Date:</label>
-            <input type="date" class="form-control" />
+            <input type="date" class="form-control" name="Date" required />
           </div>
           <div class="col">
             <label for="particlulars">Particulars:</label>
@@ -42,6 +42,8 @@
               type="text"
               class="form-control"
               placeholder="Enter item name"
+              name="Item"
+              required
             />
           </div>
         </div>
@@ -52,19 +54,44 @@
               type="number"
               class="form-control"
               placeholder="Enter Cost"
+              name="Cost"
+              required
             />
           </div>
           <div class="col">
             <label for="Transcation">Transaction Details:</label>
             <input
-              type="number"
+              type="text"
               class="form-control"
               placeholder="Enter mode of payment"
+              name="Payment_Mode"
+              required
+            />
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col">
+            <label for="cost">Quantity:</label>
+            <input
+              type="number"
+              class="form-control"
+              placeholder="Enter Quantity"
+              name="Quantity"
+            />
+          </div>
+          <div class="col">
+            <label for="Transcation">Extra Note:</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Enter Note"
+              name="Note"
+              required
             />
           </div>
         </div>
         <div class="text-center mt-5">
-          <button type="button" class="btn btn-primary submit-btn">
+          <button type="submit" class="btn btn-primary submit-btn">
             Save Details
           </button>
         </div>
@@ -88,5 +115,31 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"
     ></script>
+
+    <script>
+      $(document).ready(function() {
+        let expenseForm = $(".expense-add-form");
+        let submitBtn = $(".submit-btn");
+        expenseForm.on("submit", function(e) {
+          e.preventDefault();
+          // var form = expenseForm[0];
+          // var formData = new FormData(form);
+          $.ajax({
+            headers: { Accept: "application/json" },
+            method: "POST",
+            dataType: "text",
+            url: "http://localhost:3000/expense_list",
+            data: $(this).serialize(),
+            contentType: "application/x-www-form-urlencoded",
+            success: function(res) {
+              console.log(res);
+            },
+            error: function(er) {
+              console.log(er);
+            }
+          });
+        });
+      });
+    </script>
   </body>
 </html>

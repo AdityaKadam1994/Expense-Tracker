@@ -13,6 +13,11 @@ a.nav-link {
     color: red;
 }
 
+
+table {
+    border: 1px solid #f6f6f6;
+}
+
 .expense-add-form {
     background: #f6f6f6;
     padding: 40px 25px;
