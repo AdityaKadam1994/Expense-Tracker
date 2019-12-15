@@ -1,13 +1,14 @@
 {
   "expense_list": [
     {
-      "Date": "2019-12-13",
-      "Item": "Batteries",
-      "Cost": "84",
-      "Payment_Mode": "Phone Pe",
-      "Quantity": "2",
+      "Date": "2019-11-23",
+      "Item": "Lunch",
+      "Cost": "60",
+      "Payment_Mode": "Cash",
+      "Quantity": "1",
       "Note": "Paid",
-      "id": 41
+      "id": 2,
+      "Returns": "0"
     }
   ]
 }
