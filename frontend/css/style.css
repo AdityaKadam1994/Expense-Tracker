@@ -45,3 +45,6 @@ table {
 p {
     margin-bottom: 0;
 }
+.item {
+    cursor: pointer;
+}

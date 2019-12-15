@@ -21,6 +21,7 @@
   </head>
   <body>
     <!-- git@github.com:vinodnimbalkar/aditya-api.git -->
+    <!-- git@github.com:AdityaKadam1994/Expense-Tracker.git -->
     <ul class="nav justify-content-center pt-3 pb-3 bg-dark">
       <li class="nav-item">
         <a class="nav-link active" href="/">Expense List</a>
@@ -84,13 +85,14 @@
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
     <script src="./jquery.simplePagination.js"></script>
-    <script id="entry-template" type="text/x-handlebars-template">
 
+    <!-- list template -->
+    <script id="entry-template" type="text/x-handlebars-template">
         {{#each this}}
         <tr>
           <th scope="row">{{id}}</th>
           <td>{{Date}}</td>
-          <td><a href="#"> {{Item}} </a></td>
+          <td><a class="item" data-id={{id}}> {{Item}} </a></td>
           <td>{{Quantity}}</td>
           <td>{{Cost}}</td>
           <td>{{Payment_Mode}}</td>
@@ -107,6 +109,117 @@
         </tr>
       {{/each}}
     </script>
+
+    <!-- Edit template -->
+
+    <div
+      class="modal fade bd-example-modal-lg"
+      id="exampleModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Edit Details</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <script id="modal-template" type="text/x-handlebars-template">
+              <div class="form-wrapper">
+                <form class="expense-add-form mt-1">
+                  <div class="row">
+                    <div class="col">
+                      <label for="date">Date:</label>
+                      <input
+                        type="date"
+                        class="form-control"
+                        name="Date"
+                        required
+                        value={{Date}}
+                      />
+                    </div>
+                    <div class="col">
+                      <label for="particlulars">Particulars:</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter item name"
+                        name="Item"
+                        required
+                        value="{{Item}}"
+                      />
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col">
+                      <label for="cost">Cost:</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        placeholder="Enter Cost"
+                        name="Cost"
+                        value="{{Cost}}"
+                        required
+                      />
+                    </div>
+                    <div class="col">
+                      <label for="Transcation">Transaction Details:</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter mode of payment"
+                        name="Payment_Mode"
+                        value="{{Payment_Mode}}"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col">
+                      <label for="cost">Quantity:</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        placeholder="Enter Quantity"
+                        name="Quantity"
+                        value="{{Quantity}}"
+                      />
+                    </div>
+                    <div class="col">
+                      <label for="Transcation">Extra Note:</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter Note"
+                        name="Note"
+                        value="{{Note}}"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="text-center mt-5">
+                    <button type="submit" class="btn btn-primary submit-btn" data-id={{id}}>
+                      Save Details
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
       $(document).ready(function() {
         // get expense list
@@ -129,11 +242,8 @@
                 initialValue
               );
               $(".total-cost").html(total_cost);
-              console.log(total_cost);
             },
-            error: function(er) {
-              console.log(er);
-            }
+            error: function(er) {}
           });
         }
 
@@ -148,9 +258,7 @@
             success: function(res) {
               getFunctionList();
             },
-            error: function(er) {
-              console.log(er);
-            }
+            error: function(er) {}
           });
         });
         getFunctionList();
@@ -199,11 +307,64 @@
                 initialValue
               );
               $(".total-cost").html(total_cost);
-              console.log(total_cost);
             },
-            error: function(er) {
-              console.log(er);
+            error: function(er) {}
+          });
+        });
+
+        // Edit details
+        $("body").on("click", ".item", function() {
+          let DataId = $(this).data("id");
+          $(".form-wrapper").empty();
+          $("#exampleModal").modal("show");
+          $.ajax({
+            headers: { Accept: "application/json" },
+            method: "GET",
+            url: `http://localhost:3000/expense_list?id=${DataId}`,
+            success: function(res) {
+              let source = $("#modal-template").html();
+              let template = Handlebars.compile(source);
+
+              $(".modal-body").append(template(res[0]));
+            },
+            error: function(er) {}
+          });
+        });
+
+        // Submit the edited form
+        //converting formdata into json object
+        $.fn.serializeObject = function() {
+          var o = {};
+          var a = this.serializeArray();
+          $.each(a, function() {
+            if (o[this.name] !== undefined) {
+              if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+              }
+              o[this.name].push(this.value || "");
+            } else {
+              o[this.name] = this.value || "";
             }
+          });
+          return o;
+        };
+        let expenseForm = $("body .expense-add-form");
+        let submitBtn = $("body .submit-btn");
+
+        $("body").on("submit", ".expense-add-form", function(e) {
+          e.preventDefault();
+          let DataId = $(".submit-btn").data("id");
+          $.ajax({
+            headers: { Accept: "application/json" },
+            type: "PATCH",
+            dataType: "json",
+            url: `http://localhost:3000/expense_list/${DataId}`,
+            data: JSON.stringify($(".expense-add-form").serializeObject()),
+            contentType: "application/json",
+            success: function(res) {
+              // $("#exampleModal").modal("hide");
+            },
+            error: function(er) {}
           });
         });
       });
